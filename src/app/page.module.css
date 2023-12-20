@@ -46,9 +46,11 @@
   gap: 16px;
 }
 @media only screen and (max-width: 767px) {
-  .sectionComponent, .headerComponent {
-    padding: 0.5rem;
-    
+  .headerComponent {
+    padding: 0.8rem;
+  }
+  .sectionComponent {
+    padding: 2rem;
   }
   .headerComponent {
     width: auto;

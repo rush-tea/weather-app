@@ -108,7 +108,6 @@ const DashboardComponent = ({ coordinates }: DashboardComponentProps) => {
         setLoading(true);
         const [latitude, longitude] = coordinates.split(" ");
         const response = await fetchWeatherData(latitude, longitude);
-        console.log(response);
         const firstWeatherData =
           response && response.length > 0 ? response[0] : null;
 
@@ -163,8 +162,6 @@ const DashboardComponent = ({ coordinates }: DashboardComponentProps) => {
               : null;
 
           if (forecastData) {
-            console.log("forecastData:", forecastData);
-
             const todayMidnightTimestamp =
               new Date().setHours(0, 0, 0, 0) / 1000;
             const current_datetime = Math.floor(Date.now() / 1000);
@@ -241,7 +238,6 @@ const DashboardComponent = ({ coordinates }: DashboardComponentProps) => {
             const averagedWeekForecast = Object.keys(groupedWeekForecast).map(
               (date) => {
                 const items = groupedWeekForecast[date];
-                console.log(items);
                 const averageItem = {
                   timestamp: date,
                   currentTemperature: calculateAverage(
@@ -412,7 +408,7 @@ const DashboardComponent = ({ coordinates }: DashboardComponentProps) => {
         { label: "Temperature", value: `${Math.round(currentTemperature)} °C` },
         { label: "Feels Like", value: `${Math.round(feelTemperature)} °C` },
         { label: "Weather ", value: weatherDescription },
-        { label: "Wind Speed", value: `${windSpeed} m/s` },
+        { label: "Wind Speed", value: `${Math.round(windSpeed)} m/s` },
       ];
 
       const container = document.createElement("div");
@@ -420,6 +416,7 @@ const DashboardComponent = ({ coordinates }: DashboardComponentProps) => {
       container.style.flexDirection = "column";
       container.style.padding = "5px";
       container.style.fontSize = "8px";
+      container.style.minWidth = "100px";
 
       const heading = document.createElement("h3");
       heading.textContent = formattedTimestamp;
@@ -428,7 +425,6 @@ const DashboardComponent = ({ coordinates }: DashboardComponentProps) => {
       if (heading.textContent !== "Invalid Date") {
         container.appendChild(heading);
       }
-      console.log(forecastDetails);
 
       forecastDetails.forEach(({ label, value }) => {
         const row = document.createElement("div");
@@ -650,7 +646,7 @@ const DashboardComponent = ({ coordinates }: DashboardComponentProps) => {
                   />
                 </div>
 
-                <h1>{weatherData.currentTemperature} °C</h1>
+                <h1>{Math.round(weatherData.currentTemperature)} °C</h1>
               </div>
             </div>
           </div>
@@ -684,7 +680,7 @@ const DashboardComponent = ({ coordinates }: DashboardComponentProps) => {
                     Real Feel
                   </h6>
                 </div>
-                <h4>{weatherData.feelTemperature} °C</h4>
+                <h4>{Math.round(weatherData.feelTemperature)} °C</h4>
               </div>
               <div
                 style={{
@@ -717,7 +713,7 @@ const DashboardComponent = ({ coordinates }: DashboardComponentProps) => {
                     Wind Speed
                   </h6>
                 </div>
-                <h4>{weatherData.windSpeed} m/s</h4>
+                <h4>{Math.round(weatherData.windSpeed)} m/s</h4>
               </div>
               <div
                 style={{
@@ -750,7 +746,7 @@ const DashboardComponent = ({ coordinates }: DashboardComponentProps) => {
                     Clouds
                   </h6>
                 </div>
-                <h4>{weatherData.clouds} %</h4>
+                <h4>{Math.round(weatherData.clouds)} %</h4>
               </div>
               <div
                 style={{
@@ -783,7 +779,7 @@ const DashboardComponent = ({ coordinates }: DashboardComponentProps) => {
                     Humidity
                   </h6>
                 </div>
-                <h4>{weatherData.humidity} %</h4>
+                <h4>{Math.round(weatherData.humidity)} %</h4>
               </div>
             </div>
           </div>

@@ -64,7 +64,6 @@ export const InputComponent = ({ value, setValue }: InputComponentProps) => {
       if (typeof enteredData === "string") {
         setSearchValue(enteredData);
       } else {
-        console.log(enteredData);
         setSearchValue(enteredData);
         setValue(enteredData.value);
       }

@@ -26,7 +26,6 @@ const GEO_API_OPTIONS = {
       const forcastDataResponse = await forcastDataPromise.json();
       return [weatherDataResponse, forcastDataResponse];
     } catch (error) {
-      console.log(error);
     }
   };
 
@@ -40,7 +39,6 @@ const GEO_API_OPTIONS = {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.log(error);
       return;
     }
   };

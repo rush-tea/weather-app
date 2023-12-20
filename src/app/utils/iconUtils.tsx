@@ -14,7 +14,6 @@ declare const require: {
   }
   
   export function weatherIcon(imageName: string) {
-    console.log(weatherIcon);
     const allWeatherIcons: Record<string, any> = importAll(
       require.context('../assets/icons', false, /\.(png)$/)
     );
