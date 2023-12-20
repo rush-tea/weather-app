@@ -1,0 +1,89 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  color: white;
+  background-image: linear-gradient(to right top, #a5c6f7, #89b3eb, #6ca1df, #498ed3, #0a7dc7);
+}
+
+.sectionComponent {
+  display: flex;
+  width: 100%;
+  padding: 1.5rem 4rem;
+  flex-direction: column;
+}
+
+.button {
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: none;
+  border: 1px solid #dcdcdc;
+  background: transparent;
+  color: white;
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.headerComponent {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 4rem;
+  border-bottom: 1px solid #dcdcdc;
+}
+
+.buttonText {
+  margin-left: 5px;
+}
+
+.headerSection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+@media only screen and (max-width: 767px) {
+  .headerComponent {
+    padding: 0.8rem;
+  }
+  .sectionComponent {
+    padding: 2rem;
+  }
+  .headerComponent {
+    width: auto;
+  }
+
+  .button {
+    font-size: 12px;
+  }
+  .buttonText {
+    display: none;
+  }
+  .buttonText2 {
+    display: none;
+  }
+}
+
+/* Tablet screens (768px to 1023px) */
+@media only screen and (min-width: 768px) and (max-width: 1023px) {
+  .sectionComponent, .headerComponent {
+    padding: 1.5rem;
+  }
+
+  .button {
+    font-size: 14px;
+  }
+  .buttonText {
+    display: none;
+  }
+}
+
+/* Desktop screens (1024px and above) */
+@media only screen and (min-width: 1024px) {
+  .sectionComponent, .headerComponent {
+    padding: 2rem 4rem;
+  }
+}
