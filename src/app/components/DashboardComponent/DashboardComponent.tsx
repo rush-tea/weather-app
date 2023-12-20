@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { fetchWeatherData } from "../../utils/requests";
-import styles from "./Dashboard.module.css";
+import styles from "./DashboardComponent.module.css";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import { Line } from "react-chartjs-2";
 import {

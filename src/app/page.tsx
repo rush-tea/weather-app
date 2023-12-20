@@ -5,7 +5,7 @@ import styles from "./page.module.css";
 import { Poppins } from "next/font/google";
 import { NearMeOutlined } from "@mui/icons-material";
 import InputComponent from "./components/InputComponent/InputComponent";
-import DashboardComponent from "./components/DashboardComponent/Dashboard";
+import DashboardComponent from "./components/DashboardComponent/DashboardComponent";
 
 const poppins = Poppins({
   weight: "400",
