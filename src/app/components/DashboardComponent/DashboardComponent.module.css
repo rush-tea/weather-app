@@ -92,3 +92,20 @@
         font-size: 14px;
     }
   }
+
+  @media only screen and (min-width: 768px) and (max-width: 1023px) {
+  
+    .emptyContainer {
+        font-size: 14px;
+    }
+  }
+
+  @media only screen and (min-width: 1024px) {
+    .chartsContainer {
+        align-items: center;
+    display: flex;
+    justify-content: center;
+    width: 60%;
+    height: 60%;
+    }
+  }
