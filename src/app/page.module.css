@@ -4,7 +4,7 @@
   align-items: center;
   min-height: 100vh;
   color: white;
-  background-image: linear-gradient(to right top, #a5c6f7, #89b3eb, #6ca1df, #498ed3, #0a7dc7);
+  background-image: linear-gradient(to bottom, #442399, #6339b1, #814fc9, #9e66e2, #bc7efb);
 }
 
 .sectionComponent {
@@ -46,13 +46,16 @@
   align-items: center;
   gap: 16px;
 }
+
 @media only screen and (max-width: 767px) {
   .headerComponent {
     padding: 0.8rem;
   }
+
   .sectionComponent {
-    padding: 2rem;
+    padding: 1rem;
   }
+
   .headerComponent {
     width: auto;
   }
@@ -60,9 +63,11 @@
   .button {
     font-size: 12px;
   }
+
   .buttonText {
     display: none;
   }
+
   .buttonText2 {
     display: none;
   }
@@ -70,13 +75,16 @@
 
 /* Tablet screens (768px to 1023px) */
 @media only screen and (min-width: 768px) and (max-width: 1023px) {
-  .sectionComponent, .headerComponent {
+
+  .sectionComponent,
+  .headerComponent {
     padding: 1.5rem;
   }
 
   .button {
     font-size: 14px;
   }
+
   .buttonText {
     display: none;
   }
@@ -84,7 +92,9 @@
 
 /* Desktop screens (1024px and above) */
 @media only screen and (min-width: 1024px) {
-  .sectionComponent, .headerComponent {
+
+  .sectionComponent,
+  .headerComponent {
     padding: 2rem 4rem;
   }
 }

@@ -67,7 +67,8 @@
     justify-content: space-evenly;
     gap: 32px;
     margin-top: 32px;
-    padding: 1.5rem;
+    padding: 0.5rem;
+    width: 100%;
 }
 
 .todaysForecastChartContainer {
