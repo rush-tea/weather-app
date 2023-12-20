@@ -1,95 +1,60 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
+import { useEffect, useState } from "react";
+import styles from "./page.module.css";
+import InputComponent, {
+  CityDataType,
+} from "./components/InputComponent/InputComponent";
+import { Poppins } from "next/font/google";
+import DashboardComponent from "./components/DashboardComponent/dashboard";
+import { NearMeOutlined } from "@mui/icons-material";
+
+const poppins = Poppins({
+  weight: "400",
+  subsets: ["latin"],
+});
 
 export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+  const [latitude, setLatitude] = useState<null | number>(null);
+  const [longitude, setLongitude] = useState<null | number>(null);
+  const [error, setError] = useState<null | string>(null);
+  const [value, setValue] = useState<string>("");
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
+  const getCurrentLocation = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLatitude(position.coords.latitude);
+        setLongitude(position.coords.longitude);
+      },
+      () => {
+        setError("Not able to get current location");
+      }
+    );
+  };
+
+  return (
+    <main className={`${styles.main} ${poppins.className}`}>
+      <div className={styles.headerComponent}>
+        <div className={styles.headerSection}>
+          <InputComponent value={value} setValue={setValue} />
+          <button className={`${styles.button} ${poppins.className}`} onClick={getCurrentLocation}>
+            <NearMeOutlined sx={{
+              fontSize: "16px",
+            }}/> <h4 className={styles.buttonText}>Current location</h4>
+          </button>
+        </div>
+        <h4 className={styles.buttonText2}>Weather App</h4>
+      </div>
+      <div className={styles.sectionComponent}>
+        <DashboardComponent
+          coordinates={
+            value.length > 0
+              ? value
+              : latitude && longitude
+              ? `${latitude} ${longitude}`
+              : ""
+          }
         />
       </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
     </main>
-  )
+  );
 }

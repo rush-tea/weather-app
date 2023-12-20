@@ -1,0 +1,19 @@
+.inputComponentContainer {
+    display: flex;
+    gap: 16px;
+    padding: 10px;
+    color: black;
+}
+
+.inputComponent {
+    min-width: 300px;
+}
+
+.button {
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.inputTextfield {
+    border-radius: 5px;
+}
