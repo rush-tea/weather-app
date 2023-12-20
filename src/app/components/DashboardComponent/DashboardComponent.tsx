@@ -3,6 +3,7 @@ import { fetchWeatherData } from "../../utils/requests";
 import styles from "./DashboardComponent.module.css";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import { Line } from "react-chartjs-2";
+import RiseLoader from "react-spinners/ClipLoader";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -17,9 +18,7 @@ import {
 } from "chart.js";
 import * as _ from "lodash";
 import Image from "next/image";
-import {
-  ThermostatOutlined,
-} from "@mui/icons-material";
+import { ThermostatOutlined } from "@mui/icons-material";
 import React from "react";
 
 ChartJS.register(
@@ -445,31 +444,30 @@ const DashboardComponent = ({ coordinates }: DashboardComponentProps) => {
     }
     const { offsetLeft: positionX, offsetTop: positionY } = chart.canvas;
 
-tooltipEl.style.opacity = 1;
-tooltipEl.style.font = tooltip.options.bodyFont.string;
-tooltipEl.style.padding =
-  tooltip.options.padding + "px " + tooltip.options.padding + "px";
+    tooltipEl.style.opacity = 1;
+    tooltipEl.style.font = tooltip.options.bodyFont.string;
+    tooltipEl.style.padding =
+      tooltip.options.padding + "px " + tooltip.options.padding + "px";
 
-const idealLeft = positionX + tooltip.caretX - 30;
-const idealTop = positionY + tooltip.caretY;
-const idealRight = positionX - tooltip.caretX + 30;
+    const idealLeft = positionX + tooltip.caretX - 30;
+    const idealTop = positionY + tooltip.caretY;
+    const idealRight = positionX - tooltip.caretX + 30;
 
+    const viewportWidth =
+      window.innerWidth || document.documentElement.clientWidth;
+    const tooltipWidth = tooltip.width;
 
-const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
-const tooltipWidth = tooltip.width;
+    if (idealLeft < 0) {
+      tooltipEl.style.left = Math.max(idealLeft, 0) + "px";
+    } else if (idealLeft + tooltipWidth > viewportWidth) {
+      tooltipEl.style.left = viewportWidth - tooltipWidth + "px";
+    } else if (tooltip.caretX < tooltipWidth / 2) {
+      tooltipEl.style.left = idealLeft + 55 + "px";
+    } else {
+      tooltipEl.style.left = idealLeft + "px";
+    }
 
-if (idealLeft < 0) {
-  tooltipEl.style.left = Math.max(idealLeft, 0) + "px";
-} else if (idealLeft + tooltipWidth > viewportWidth) {
-  tooltipEl.style.left = viewportWidth - tooltipWidth + "px";
-} else if (tooltip.caretX < tooltipWidth/2) {
-  tooltipEl.style.left = idealLeft + 55 + "px";
-} else {
-  tooltipEl.style.left = idealLeft + "px";
-}
-
-tooltipEl.style.top = idealTop + "px";
-
+    tooltipEl.style.top = idealTop + "px";
   };
 
   const options: ChartOptions<"line"> = {
@@ -573,8 +571,12 @@ tooltipEl.style.top = idealTop + "px";
           justifyContent: "center",
         }}
       >
-        {" "}
-        <h2>Loading...</h2>
+        <RiseLoader
+          loading={loading}
+          size={50}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+        />
       </div>
     );
   }

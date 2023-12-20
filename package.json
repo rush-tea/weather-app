@@ -20,7 +20,8 @@
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18",
     "react-select": "^5.8.0",
-    "react-select-async-paginate": "^0.7.3"
+    "react-select-async-paginate": "^0.7.3",
+    "react-spinners": "^0.13.8"
   },
   "devDependencies": {
     "@types/chart.js": "^2.9.41",
