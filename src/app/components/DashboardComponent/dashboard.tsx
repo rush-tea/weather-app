@@ -1,8 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
-import { fetchWeatherData } from "@/app/utils/requests";
-import styles from "./dashboard.module.css";
-import { Box } from "@mui/material";
-import { weatherIcon } from "@/app/utils/iconUtils";
+import { fetchWeatherData } from "../../utils/requests";
+import styles from "./Dashboard.module.css";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import { Line } from "react-chartjs-2";
 import {
@@ -23,6 +21,7 @@ import {
   ThermostatAutoOutlined,
   ThermostatOutlined,
 } from "@mui/icons-material";
+import React from "react";
 
 ChartJS.register(
   CategoryScale,
@@ -167,8 +166,8 @@ const DashboardComponent = ({ coordinates }: DashboardComponentProps) => {
             const current_datetime = Math.floor(Date.now() / 1000);
             const current_date = new Date().toISOString().split("T")[0];
 
-            const todaysForecast = [];
-            const weekForecast = [];
+            const todaysForecast: ForecastDataType[] = [];
+            const weekForecast: ForecastDataType[] = [];
 
             for (let i = 0; i < forecastData.length; i++) {
               const item = forecastData[i];
@@ -177,13 +176,7 @@ const DashboardComponent = ({ coordinates }: DashboardComponentProps) => {
                 item.dt_txt.startsWith(current_date.substring(0, 10)) &&
                 item.dt > current_datetime
               ) {
-                // Convert timestamp to a readable format
                 const timestamp = new Date(item.dt * 1000);
-                const timeString = timestamp.toLocaleTimeString("en-US", {
-                  hour: "numeric",
-                  minute: "numeric",
-                  hour12: true,
-                });
 
                 todaysForecast.push({
                   timestamp: item.dt,

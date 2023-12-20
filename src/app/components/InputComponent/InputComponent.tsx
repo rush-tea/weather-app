@@ -1,13 +1,8 @@
-import TextField from "@mui/material/TextField";
-import Autocomplete, { autocompleteClasses } from "@mui/material/Autocomplete";
-import CircularProgress from "@mui/material/CircularProgress";
 import { useState, Fragment, MouseEvent } from "react";
-import { fetchCities } from "@/app/utils/requests";
 import styles from "./InputComponent.module.css";
-import Box from "@mui/material/Box";
-import styled from "@emotion/styled";
-import { ClickAwayListener, InputBase } from "@mui/material";
 import { AsyncPaginate } from "react-select-async-paginate";
+import React from "react";
+import { fetchCities } from "../../utils/requests";
 
 export interface CityDataType {
   city: string;

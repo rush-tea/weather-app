@@ -2,9 +2,12 @@
 import { useEffect, useState } from "react";
 import styles from "./page.module.css";
 import { Poppins } from "next/font/google";
-import DashboardComponent from "./components/DashboardComponent/dashboard";
 import { NearMeOutlined } from "@mui/icons-material";
 import InputComponent from "./components/InputComponent/InputComponent";
+import React from "react";
+import DashboardComponent from "./components/DashboardComponent/Dashboard";
+
+// Import necessary dependencies and components...
 
 const poppins = Poppins({
   weight: "400",
@@ -12,34 +15,42 @@ const poppins = Poppins({
 });
 
 export default function Home() {
-  const [value, setValue] = useState<string>(
-    window.localStorage.getItem("weatherValue") || ""
-  );
+  const [value, setValue] = useState<string>("");
 
   useEffect(() => {
-    const localStorageValue = localStorage.getItem("weatherValue");
-    if (localStorageValue) {
-      setValue(localStorageValue);
+    // Check if window is defined (client-side)
+    if (typeof window !== "undefined") {
+      const localStorageValue = localStorage.getItem("weatherValue");
+      if (localStorageValue) {
+        setValue(localStorageValue);
+      }
     }
   }, []);
 
   const getCurrentLocation = () => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setValue(`${position.coords.latitude} ${position.coords.longitude}`);
-        window.localStorage.setItem(
-          "weatherValue",
-          `${position.coords.latitude} ${position.coords.longitude}`
-        );
-      },
-      () => {
-      }
-    );
+    // Check if window is defined (client-side)
+    if (typeof window !== "undefined") {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setValue(`${position.coords.latitude} ${position.coords.longitude}`);
+          localStorage.setItem(
+            "weatherValue",
+            `${position.coords.latitude} ${position.coords.longitude}`
+          );
+        },
+        () => {
+          // Handle error if needed
+        }
+      );
+    }
   };
 
   const handleInputChange = (newValue: string) => {
-    setValue(newValue);
-    localStorage.setItem("weatherValue", newValue);
+    // Check if window is defined (client-side)
+    if (typeof window !== "undefined") {
+      setValue(newValue);
+      localStorage.setItem("weatherValue", newValue);
+    }
   };
 
   return (
@@ -67,3 +78,4 @@ export default function Home() {
     </main>
   );
 }
+
