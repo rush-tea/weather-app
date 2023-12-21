@@ -4,6 +4,7 @@
   align-items: center;
   min-height: 100vh;
   color: white;
+  padding-bottom: 2.3rem;
   background-image: linear-gradient(to bottom, #442399, #6339b1, #814fc9, #9e66e2, #bc7efb);
 }
 

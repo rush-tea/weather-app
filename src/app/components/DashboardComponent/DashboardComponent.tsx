@@ -1,100 +1,31 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { fetchWeatherData } from "../../utils/requests";
 import styles from "./DashboardComponent.module.css";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
-import { Line } from "react-chartjs-2";
 import RiseLoader from "react-spinners/ClipLoader";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler,
-  ChartOptions,
-} from "chart.js";
 import * as _ from "lodash";
 import Image from "next/image";
 import { ThermostatOutlined } from "@mui/icons-material";
-import React from "react";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Filler,
-  Legend
-);
-
-interface DashboardComponentProps {
-  coordinates: string | null;
-}
-
-interface WeatherDataType {
-  latitude: number;
-  longitude: number;
-  weatherDescription: string;
-  iconCode: string;
-  currentTemperature: number;
-  feelTemperature: number;
-  minTemperature: number;
-  maxTemperature: number;
-  pressure: number;
-  humidity: number;
-  visibility: number;
-  windSpeed: number;
-  degrees: number;
-  clouds: number;
-  time: number;
-  timezone: number;
-  id: number;
-  cityName: string;
-  countryCode: string;
-  sunrise: string;
-  sunset: string;
-}
-
-interface ForecastDataType {
-  timestamp: string;
-  currentTemperature: number;
-  feelTemperature: number;
-  pressure: number;
-  seaLevel: number;
-  humidity: number;
-  weatherDescription: string;
-  iconCode: string;
-  clouds: number;
-  windSpeed: number;
-  visibility: number;
-  timeStampText: string;
-}
-
-interface WeeklyForecastDataType {
-  timestamp: string;
-  currentTemperature: number;
-  feelTemperature: number;
-  pressure: number;
-  humidity: number;
-  windSpeed: number;
-}
+import {
+  DashboardComponentProps,
+  CurrentWeatherForecastDataType,
+  WeatherDataType,
+  WeeklyForecastDataType,
+} from "@/app/types/types";
+import CurrentWeatherForecast from "../CurrentWeatherForecastChart/CurrentWeatherForecast";
+import WeeklyForecast from "../WeeklyForecastChart/WeeklyForecast";
 
 const DashboardComponent = ({ coordinates }: DashboardComponentProps) => {
   const [weatherData, setWeatherData] = useState<WeatherDataType | null>(null);
-  const [todaysForecast, setTodaysForecast] = useState<
-    ForecastDataType[] | null
+  const [currentWeatherForecast, setCurrentWeatherForecast] = useState<
+    CurrentWeatherForecastDataType[] | null
   >(null);
-  const [weekForecast, setWeekForecast] = useState<
+  const [weeklyForecast, setWeeklyForecast] = useState<
     WeeklyForecastDataType[] | null
   >(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  function calculateAverage(arr: number[]): number {
+  const calculateAverage = (arr: number[]): number => {
     const sum = arr.reduce((acc, val) => acc + val, 0);
     return sum / arr.length;
   }
@@ -164,8 +95,8 @@ const DashboardComponent = ({ coordinates }: DashboardComponentProps) => {
             const current_datetime = Math.floor(Date.now() / 1000);
             const current_date = new Date().toISOString().split("T")[0];
 
-            const todaysForecast: ForecastDataType[] = [];
-            const weekForecast: ForecastDataType[] = [];
+            const currentWeatherForecast: CurrentWeatherForecastDataType[] = [];
+            const weeklyForecast: CurrentWeatherForecastDataType[] = [];
 
             for (let i = 0; i < forecastData.length; i++) {
               const item = forecastData[i];
@@ -174,9 +105,8 @@ const DashboardComponent = ({ coordinates }: DashboardComponentProps) => {
                 item.dt_txt.startsWith(current_date.substring(0, 10)) &&
                 item.dt > current_datetime
               ) {
-                const timestamp = new Date(item.dt * 1000);
 
-                todaysForecast.push({
+                currentWeatherForecast.push({
                   timestamp: item.dt,
                   currentTemperature: item.main.temp,
                   feelTemperature: item.main.feels_like,
@@ -200,7 +130,7 @@ const DashboardComponent = ({ coordinates }: DashboardComponentProps) => {
                   hour12: true,
                 });
 
-                weekForecast.push({
+                weeklyForecast.push({
                   timestamp: item.dt,
                   currentTemperature: item.main.temp,
                   feelTemperature: item.main.feels_like,
@@ -217,43 +147,43 @@ const DashboardComponent = ({ coordinates }: DashboardComponentProps) => {
               }
             }
 
-            if (todaysForecast.length < 7) {
-              const remainingItems = 7 - todaysForecast.length;
-              todaysForecast.push(...weekForecast.slice(0, remainingItems));
+            if (currentWeatherForecast.length < 7) {
+              const remainingItems = 7 - currentWeatherForecast.length;
+              currentWeatherForecast.push(
+                ...weeklyForecast.slice(0, remainingItems)
+              );
             }
 
-            const groupedWeekForecast = _.groupBy(
-              weekForecast,
+            const groupedWeeklyForecast = _.groupBy(
+              weeklyForecast,
               "timeStampText"
             );
-            const averagedWeekForecast = Object.keys(groupedWeekForecast).map(
-              (date) => {
-                const items = groupedWeekForecast[date];
-                const averageItem = {
-                  timestamp: date,
-                  currentTemperature: calculateAverage(
-                    items.map((item) => item.currentTemperature)
-                  ),
-                  feelTemperature: calculateAverage(
-                    items.map((item) => item.feelTemperature)
-                  ),
-                  pressure: calculateAverage(
-                    items.map((item) => item.pressure)
-                  ),
-                  humidity: calculateAverage(
-                    items.map((item) => item.humidity)
-                  ),
-                  windSpeed: calculateAverage(
-                    items.map((item) => item.windSpeed)
-                  ),
-                };
-                return averageItem;
-              }
-            );
 
-            setTodaysForecast(todaysForecast);
-            if (averagedWeekForecast) {
-              setWeekForecast(averagedWeekForecast);
+            const averagedWeeklyForecast = Object.keys(
+              groupedWeeklyForecast
+            ).map((date) => {
+              const items = groupedWeeklyForecast[date];
+              console.log(items, date);
+              const averageItem = {
+                timestamp: date,
+                currentTemperature: calculateAverage(
+                  items.map((item) => item.currentTemperature)
+                ),
+                feelTemperature: calculateAverage(
+                  items.map((item) => item.feelTemperature)
+                ),
+                pressure: calculateAverage(items.map((item) => item.pressure)),
+                humidity: calculateAverage(items.map((item) => item.humidity)),
+                windSpeed: calculateAverage(
+                  items.map((item) => item.windSpeed)
+                ),
+              };
+              return averageItem;
+            });
+
+            setCurrentWeatherForecast(currentWeatherForecast);
+            if (averagedWeeklyForecast) {
+              setWeeklyForecast(averagedWeeklyForecast);
             }
           }
         }
@@ -263,288 +193,6 @@ const DashboardComponent = ({ coordinates }: DashboardComponentProps) => {
 
     fetchWeather();
   }, [coordinates]);
-
-  const getTodaysForecastLabels = useMemo(() => {
-    if (!todaysForecast) return [];
-
-    return todaysForecast.map((item: ForecastDataType) => {
-      const timestamp = parseInt(item.timestamp);
-
-      const date = new Date(timestamp * 1000);
-
-      const hours = date.getHours();
-      const minutes = date.getMinutes();
-      const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
-      const period = hours < 12 ? "AM" : "PM";
-
-      const timeString = `${formattedHours}:${minutes
-        .toString()
-        .padStart(2, "0")} ${period}`;
-
-      return timeString;
-    });
-  }, [todaysForecast]);
-
-  const getTodaysForecastDatasets = useMemo(() => {
-    if (!todaysForecast?.length) return [];
-
-    const temperatureDataset = {
-      id: 1,
-      label: "Temperature",
-      data: todaysForecast.map((item) => item.currentTemperature),
-      borderColor: "white",
-      todaysForecast: todaysForecast,
-    };
-
-    return [temperatureDataset];
-  }, [todaysForecast]);
-
-  const getWeeklyForecastChartLabels = useMemo(() => {
-    if (!weekForecast) return [];
-
-    return weekForecast.map((item: WeeklyForecastDataType) => {
-      const date = new Date(item.timestamp);
-
-      const month = date.toLocaleString("en-US", { month: "long" });
-      const day = date.getDate();
-
-      const timeString = `${month} ${day}`;
-
-      return timeString;
-    });
-  }, [weekForecast]);
-
-  const getWeeklyForecastDatasets = useMemo(() => {
-    if (!weekForecast?.length) return [];
-
-    const temperatureDataset = {
-      id: 1,
-      label: "Temperature",
-      data: weekForecast.map((item) => item.currentTemperature),
-      borderColor: "white",
-      todaysForecast: weekForecast,
-    };
-
-    return [temperatureDataset];
-  }, [weekForecast]);
-
-  const getOrCreateTooltip = (chart: {
-    canvas: {
-      parentNode: {
-        querySelector: (arg0: string) => any;
-        appendChild: (arg0: any) => void;
-      };
-    };
-  }) => {
-    let tooltipEl = chart.canvas.parentNode.querySelector("div");
-
-    if (!tooltipEl) {
-      tooltipEl = document.createElement("div");
-      tooltipEl.style.background = "rgba(0, 0, 0, 0.7)";
-      tooltipEl.style.borderRadius = "3px";
-      tooltipEl.style.color = "white";
-      tooltipEl.style.opacity = 1;
-      tooltipEl.style.pointerEvents = "none";
-      tooltipEl.style.position = "absolute";
-      tooltipEl.style.transform = "translate(-50%, 0)";
-      tooltipEl.style.transition = "all .1s ease";
-
-      const table = document.createElement("table");
-      table.style.margin = "0px";
-
-      tooltipEl.appendChild(table);
-      chart.canvas.parentNode.appendChild(tooltipEl);
-    }
-
-    return tooltipEl;
-  };
-
-  const externalTooltipHandler = (context: { chart: any; tooltip: any }) => {
-    const { chart, tooltip } = context;
-    const tooltipEl = getOrCreateTooltip(chart);
-    if (tooltip.opacity === 0) {
-      tooltipEl.style.opacity = 0;
-      return;
-    }
-
-    while (tooltipEl.firstChild) {
-      tooltipEl.firstChild.remove();
-    }
-
-    if (tooltip.body) {
-      const todaysForecast = tooltip.dataPoints[0].dataset.todaysForecast;
-      const tooltipDataIndex = tooltip.dataPoints[0].dataIndex;
-      const selectedForecast = todaysForecast[tooltipDataIndex];
-
-      const {
-        currentTemperature,
-        feelTemperature,
-        weatherDescription,
-        windSpeed,
-        timestamp,
-      } = selectedForecast;
-
-      const formattedTimestamp = new Date(timestamp * 1000).toLocaleDateString(
-        "en-US",
-        {
-          month: "long",
-          day: "numeric",
-          hour: "numeric",
-          minute: "numeric",
-          hour12: true,
-        }
-      );
-
-      const forecastDetails = [
-        { label: "Temperature", value: `${Math.round(currentTemperature)} °C` },
-        { label: "Feels Like", value: `${Math.round(feelTemperature)} °C` },
-        { label: "Weather ", value: weatherDescription },
-        { label: "Wind Speed", value: `${Math.round(windSpeed)} m/s` },
-      ];
-
-      const container = document.createElement("div");
-      container.style.display = "flex";
-      container.style.flexDirection = "column";
-      container.style.padding = "5px";
-      container.style.fontSize = "8px";
-      container.style.minWidth = "100px";
-
-      const heading = document.createElement("h3");
-      heading.textContent = formattedTimestamp;
-      heading.style.marginBottom = "10px";
-
-      if (heading.textContent !== "Invalid Date") {
-        container.appendChild(heading);
-      }
-
-      forecastDetails.forEach(({ label, value }) => {
-        const row = document.createElement("div");
-        row.style.display = "flex";
-        row.style.justifyContent = "space-between";
-        row.style.marginBottom = "5px";
-        row.style.gap = "8px";
-        row.style.fontSize = "8px";
-        if (value === undefined || value.length === 0) {
-          return;
-        }
-
-        const labelElement = document.createElement("span");
-        labelElement.textContent = label;
-
-        const valueElement = document.createElement("span");
-        valueElement.textContent = value.toString();
-
-        row.appendChild(labelElement);
-        row.appendChild(valueElement);
-
-        container.appendChild(row);
-      });
-
-      tooltipEl.appendChild(container);
-    }
-    const { offsetLeft: positionX, offsetTop: positionY } = chart.canvas;
-
-    tooltipEl.style.opacity = 1;
-    tooltipEl.style.font = tooltip.options.bodyFont.string;
-    tooltipEl.style.padding =
-      tooltip.options.padding + "px " + tooltip.options.padding + "px";
-
-    const idealLeft = positionX + tooltip.caretX - 30;
-    const idealTop = positionY + tooltip.caretY;
-    const idealRight = positionX - tooltip.caretX + 30;
-
-    const viewportWidth =
-      window.innerWidth || document.documentElement.clientWidth;
-    const tooltipWidth = tooltip.width;
-
-    if (idealLeft < 0) {
-      tooltipEl.style.left = Math.max(idealLeft, 0) + "px";
-    } else if (idealLeft + tooltipWidth > viewportWidth) {
-      tooltipEl.style.left = viewportWidth - tooltipWidth + "px";
-    } else if (tooltip.caretX < tooltipWidth / 2) {
-      tooltipEl.style.left = idealLeft + 55 + "px";
-    } else {
-      tooltipEl.style.left = idealLeft + "px";
-    }
-
-    tooltipEl.style.top = idealTop + "px";
-  };
-
-  const options: ChartOptions<"line"> = {
-    responsive: true,
-    plugins: {
-      tooltip: {
-        enabled: false,
-        position: "nearest",
-        external: externalTooltipHandler as any,
-      },
-      legend: {
-        display: false,
-      },
-      title: {
-        text: "Weather forecast for today and tomorrow",
-        display: true,
-        color: "white",
-      },
-    },
-    scales: {
-      x: {
-        ticks: {
-          color: "white",
-          font: {
-            size: 10,
-          },
-        },
-        grid: {
-          display: false,
-        },
-      },
-      y: {
-        display: false,
-        grid: {
-          display: false,
-        },
-      },
-    },
-  };
-
-  const optionsWeek: ChartOptions<"line"> = {
-    responsive: true,
-    plugins: {
-      tooltip: {
-        enabled: false,
-        position: "nearest",
-        external: externalTooltipHandler as any,
-      },
-      legend: {
-        display: false,
-      },
-      title: {
-        text: "Weather forecast of next week",
-        display: true,
-        color: "white",
-      },
-    },
-    scales: {
-      x: {
-        ticks: {
-          color: "white",
-          font: {
-            size: 8,
-          },
-        },
-        grid: {
-          display: false,
-        },
-      },
-      y: {
-        display: false,
-        grid: {
-          display: false,
-        },
-      },
-    },
-  };
 
   if (!weatherData && !loading) {
     return (
@@ -796,30 +444,16 @@ const DashboardComponent = ({ coordinates }: DashboardComponentProps) => {
         </div>
         <div className={styles.chartsContainer}>
           <div className={styles.todaysForecastChartContainer}>
-            <Line
-              style={{
-                width: "350px",
-                height: "200px",
-              }}
-              data={{
-                labels: getTodaysForecastLabels,
-                datasets: getTodaysForecastDatasets,
-              }}
-              options={options}
-            />
+            {currentWeatherForecast && (
+              <CurrentWeatherForecast
+                currentWeatherForecastData={currentWeatherForecast}
+              />
+            )}
           </div>
           <div className={styles.weeklyForecastChartContainer}>
-            <Line
-              style={{
-                width: "350px",
-                height: "200px",
-              }}
-              data={{
-                labels: getWeeklyForecastChartLabels,
-                datasets: getWeeklyForecastDatasets,
-              }}
-              options={optionsWeek}
-            />
+            {weeklyForecast && (
+              <WeeklyForecast weeklyForecastData={weeklyForecast} />
+            )}
           </div>
         </div>
       </>
